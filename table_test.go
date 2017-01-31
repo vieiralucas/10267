@@ -101,3 +101,29 @@ func TestPaintHorizontal(t *testing.T) {
 		t.Errorf("Expect pos 3, 2 to be 4, got %v", p)
 	}
 }
+
+func TestFillRect(t *testing.T) {
+	table := CreateTable(5, 5)
+	table.FillRect(1, 1, 3, 3, 5)
+
+	var toTest = []struct {
+		actual   col
+		expected col
+	}{
+		{table.GetPixel(1, 1), 5},
+		{table.GetPixel(1, 2), 5},
+		{table.GetPixel(1, 3), 5},
+		{table.GetPixel(2, 1), 5},
+		{table.GetPixel(2, 2), 5},
+		{table.GetPixel(2, 3), 5},
+		{table.GetPixel(3, 1), 5},
+		{table.GetPixel(3, 2), 5},
+		{table.GetPixel(3, 3), 5},
+	}
+
+	for _, tt := range toTest {
+		if tt.actual != tt.expected {
+			t.Errorf("Expect %v, got %v", tt.expected, tt.actual)
+		}
+	}
+}

@@ -30,17 +30,27 @@ func (t *Table) PaintPixel(x int, y int, color col) {
 	t.rows[y][x] = color
 }
 
-// Paints the vertical segment in the column X between the rows Y1 and Y2 inclusive in colour C
+// Paints the vertical segment in the column X between the rows Y1 and Y2
+// inclusive in colour C
 func (t *Table) PaintVertical(x int, y1 int, y2 int, color col) {
 	for y := y1; y <= y2; y++ {
 		t.PaintPixel(x, y, color)
 	}
 }
 
-// Paints the horizontal segment in the row Y between the columns X1 and X2 inclusive in colour C
+// Paints the horizontal segment in the row Y between the columns X1 and X2
+// inclusive in colour C
 func (t *Table) PaintHorizontal(x1 int, x2 int, y int, color col) {
 	for x := x1; x <= x2; x++ {
 		t.PaintPixel(x, y, color)
+	}
+}
+
+// Draws the filled rectangle in colour C. (X1, Y1) is the upper left corner,
+// (X2, Y2) is the lower right corner of the rectangle
+func (t *Table) FillRect(x1 int, y1 int, x2 int, y2 int, color col) {
+	for i := y1; i <= y2; i++ {
+		t.PaintHorizontal(x1, x2, i, color)
 	}
 }
 
