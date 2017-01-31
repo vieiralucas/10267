@@ -129,29 +129,54 @@ func TestFillRect(t *testing.T) {
 }
 
 func TestFillRegion(t *testing.T) {
-	table := FromSlice([][]int{
-		{0, 1, 0, 0, 0},
-		{1, 0, 1, 1, 0},
-		{1, 0, 0, 1, 0},
-		{0, 1, 0, 0, 1},
-		{0, 0, 1, 1, 0},
-		{0, 0, 0, 0, 0},
-	})
+	tts := []struct {
+		input    *Table
+		expected string
+	}{
+		{
+			FromSlice([][]int{
+				{0, 1, 0, 0, 0},
+				{1, 0, 1, 1, 0},
+				{1, 0, 0, 1, 0},
+				{0, 1, 0, 0, 1},
+				{0, 0, 1, 1, 0},
+				{0, 0, 0, 0, 0},
+			}),
+			FromSlice([][]int{
+				{0, 1, 0, 0, 0},
+				{1, 2, 1, 1, 0},
+				{1, 2, 2, 1, 0},
+				{0, 1, 2, 2, 1},
+				{0, 0, 1, 1, 0},
+				{0, 0, 0, 0, 0},
+			}).ToString(),
+		},
 
-	table.FillRegion(1, 1, 2)
+		{
+			FromSlice([][]int{
+				{1, 1, 0, 0, 0},
+				{0, 0, 1, 1, 0},
+				{1, 0, 0, 1, 0},
+				{0, 1, 0, 0, 1},
+				{0, 0, 1, 1, 0},
+				{0, 0, 0, 0, 0},
+			}),
+			FromSlice([][]int{
+				{1, 1, 0, 0, 0},
+				{2, 2, 1, 1, 0},
+				{1, 2, 2, 1, 0},
+				{0, 1, 2, 2, 1},
+				{0, 0, 1, 1, 0},
+				{0, 0, 0, 0, 0},
+			}).ToString(),
+		},
+	}
 
-	expected := FromSlice([][]int{
-		{0, 1, 0, 0, 0},
-		{1, 2, 1, 1, 0},
-		{1, 2, 2, 1, 0},
-		{0, 1, 2, 2, 1},
-		{0, 0, 1, 1, 0},
-		{0, 0, 0, 0, 0},
-	}).ToString()
-	actual := table.ToString()
-
-	if expected != actual {
-		t.Errorf("Expected\n%v\ngot\n%v", expected, actual)
+	for _, tt := range tts {
+		tt.input.FillRegion(1, 1, 2)
+		if actual := tt.input.ToString(); tt.expected != actual {
+			t.Errorf("Expected\n%v\ngot\n%v", tt.expected, actual)
+		}
 	}
 }
 
