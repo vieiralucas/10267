@@ -59,25 +59,6 @@ func (t *Table) FillRect(x1 int, y1 int, x2 int, y2 int, color col) {
 	}
 }
 
-func iter(t *Table, starter col, color col, x int, y int) {
-	// out of bounds, stop recursion
-	if x < 0 || x >= t.Width() || y < 0 || y >= t.Height() {
-		return
-	}
-
-	curr := t.GetPixel(x, y)
-	// reach wall, stop recursion
-	if curr != starter {
-		return
-	}
-
-	t.PaintPixel(x, y, color)
-	iter(t, starter, color, x+1, y) // right
-	iter(t, starter, color, x-1, y) // left
-	iter(t, starter, color, x, y-1) // up
-	iter(t, starter, color, x, y+1) // down
-}
-
 // Fills the region with the colour C. The region R to be filled
 // is defined as follows. The pixel (X, Y ) belongs to this region.
 // The other pixel belongs to the region R if and only if it has
@@ -86,7 +67,27 @@ func iter(t *Table, starter col, color col, x int, y int) {
 func (t *Table) FillRegion(x int, y int, color col) {
 	starter := t.GetPixel(x, y)
 
-	iter(t, starter, color, x, y)
+	t.fillRegionRecursive(starter, color, x, y)
+}
+
+func (t *Table) fillRegionRecursive(starter col, color col, x int, y int) {
+	// out of bounds, stop recursion
+	if x < 0 || x >= t.Width() || y < 0 || y >= t.Height() {
+		return
+	}
+
+	curr := t.GetPixel(x, y)
+	// reach a wall, stop recursion
+	if curr != starter {
+		return
+	}
+
+	t.PaintPixel(x, y, color)
+
+	t.fillRegionRecursive(starter, color, x+1, y) // right
+	t.fillRegionRecursive(starter, color, x-1, y) // left
+	t.fillRegionRecursive(starter, color, x, y-1) // up
+	t.fillRegionRecursive(starter, color, x, y+1) // down
 }
 
 // Returns human readable string representation of the table
