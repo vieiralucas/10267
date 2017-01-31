@@ -127,3 +127,68 @@ func TestFillRect(t *testing.T) {
 		}
 	}
 }
+
+func TestFillRegion(t *testing.T) {
+	table := FromSlice([][]int{
+		{0, 1, 0, 0, 0},
+		{1, 0, 1, 1, 0},
+		{1, 0, 0, 1, 0},
+		{0, 1, 0, 0, 1},
+		{0, 0, 1, 1, 0},
+		{0, 0, 0, 0, 0},
+	})
+
+	table.FillRegion(1, 1, 2)
+
+	expected := FromSlice([][]int{
+		{0, 1, 0, 0, 0},
+		{1, 2, 1, 1, 0},
+		{1, 2, 2, 1, 0},
+		{0, 1, 2, 2, 1},
+		{0, 0, 1, 1, 0},
+		{0, 0, 0, 0, 0},
+	}).ToString()
+	actual := table.ToString()
+
+	if expected != actual {
+		t.Errorf("Expected\n%v\ngot\n%v", expected, actual)
+	}
+}
+
+func TestFromSlice(t *testing.T) {
+	table := FromSlice([][]int{
+		{0, 0, 0, 0, 0},
+		{0, 1, 0, 0, 0},
+		{0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0},
+	})
+
+	if width := table.Width(); width != 5 {
+		t.Errorf("Expect table width to be 5, got: %v", width)
+	}
+
+	if height := table.Height(); height != 5 {
+		t.Errorf("Expect table height to be 5, got: %v", height)
+	}
+
+	if pixel := table.GetPixel(1, 1); pixel != 1 {
+		t.Errorf("Expect pos 1, 1 to be 1, got %v", pixel)
+	}
+}
+
+func TestToString(t *testing.T) {
+	table := FromSlice([][]int{
+		{0, 0, 0, 0, 0},
+		{0, 1, 0, 0, 0},
+		{0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0},
+		{0, 0, 0, 0, 0},
+	})
+	expected := "0, 0, 0, 0, 0, \n0, 1, 0, 0, 0, \n0, 0, 0, 0, 0, \n0, 0, 0, 0, 0, \n0, 0, 0, 0, 0, \n"
+	actual := table.ToString()
+
+	if expected != actual {
+		t.Errorf("Expected\n%v\ngot\n%v", expected, actual)
+	}
+}

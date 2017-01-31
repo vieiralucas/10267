@@ -1,5 +1,10 @@
 package table
 
+import (
+	"bytes"
+	"strconv"
+)
+
 type col int
 
 type row []col
@@ -54,12 +59,72 @@ func (t *Table) FillRect(x1 int, y1 int, x2 int, y2 int, color col) {
 	}
 }
 
+func iter(t *Table, starter col, color col, x int, y int) {
+	// out of bounds, stop recursion
+	if x < 0 || x >= t.Width() || y < 0 || y >= t.Height() {
+		return
+	}
+
+	curr := t.GetPixel(x, y)
+	// reach wall, stop recursion
+	if curr != starter {
+		return
+	}
+
+	t.PaintPixel(x, y, color)
+	iter(t, starter, color, x+1, y) // right
+	iter(t, starter, color, x-1, y) // left
+	iter(t, starter, color, x, y-1) // up
+	iter(t, starter, color, x, y+1) // down
+}
+
+// Fills the region with the colour C. The region R to be filled
+// is defined as follows. The pixel (X, Y ) belongs to this region.
+// The other pixel belongs to the region R if and only if it has
+// the same colour as pixel (X, Y ) and a common side with any
+// pixel which belongs to this region.
+func (t *Table) FillRegion(x int, y int, color col) {
+	starter := t.GetPixel(x, y)
+
+	iter(t, starter, color, x, y)
+}
+
+// Returns human readable string representation of the table
+func (t *Table) ToString() string {
+	var buffer bytes.Buffer
+
+	for _, r := range t.rows {
+		for _, c := range r {
+			buffer.WriteString(strconv.Itoa(int(c)))
+			buffer.WriteString(", ")
+		}
+
+		buffer.WriteString("\n")
+	}
+
+	return buffer.String()
+}
+
 // Creates a new table M × N. All the pixels are colored in white (O)
 func CreateTable(m int, n int) *Table {
 	rows := make([]row, n)
 
 	for i := 0; i < n; i++ {
 		rows[i] = make([]col, m)
+	}
+
+	return &Table{rows}
+}
+
+// Creates a table from an slice of slices
+func FromSlice(s [][]int) *Table {
+	rows := make([]row, len(s))
+
+	for i := 0; i < len(s); i++ {
+		rows[i] = make([]col, len(s[i]))
+		for j := 0; j < len(s[i]); j++ {
+			rows[i][j] = col(s[i][j])
+		}
 	}
 
 	return &Table{rows}
